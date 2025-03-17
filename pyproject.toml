@@ -5,10 +5,6 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "data_utils"
 version = "0.1.0"
-packages = [
-    {include = "data_utils", from = "src"},
-    {include = "data_utils/sharegpt_process", from = "src/data_utils"}
-]
 authors = [{ name = "Josephydu", email = "josephyou@tencent.com" }]
 description = "A dataset process tool repo used by josephyou."
 readme = "README.md"
