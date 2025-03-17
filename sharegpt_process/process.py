@@ -1,12 +1,51 @@
 import json
 import os
 import sys
+import requests
+from typing import Optional
+from tqdm import tqdm
 from transformers import (
     AutoTokenizer,
     PreTrainedTokenizer,
     PreTrainedTokenizerBase,
     PreTrainedTokenizerFast,
 )
+SHAREGPT_URL = "https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/resolve/main/ShareGPT_V3_unfiltered_cleaned_split.json"
+
+def download_and_cache_file(url: str, filename: Optional[str] = None):
+    """Read and cache a file from a url."""
+    if filename is None:
+        filename = os.path.join("/tmp", url.split("/")[-1])
+
+    # Check if the cache file already exists
+    if os.path.exists(filename):
+        return filename
+
+    print(f"Downloading from {url} to {filename}")
+
+    # Stream the response to show the progress bar
+    response = requests.get(url, stream=True)
+    response.raise_for_status()  # Check for request errors
+
+    # Total size of the file in bytes
+    total_size = int(response.headers.get("content-length", 0))
+    chunk_size = 1024  # Download in chunks of 1KB
+
+    # Use tqdm to display the progress bar
+    with open(filename, "wb") as f, tqdm(
+        desc=filename,
+        total=total_size,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+    ) as bar:
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            f.write(chunk)
+            bar.update(len(chunk))
+
+    return filename
+
+
 def select_sharegpt_promots(file_path, nums, target_prompt_len, tokenizer):
     with open(file_path, 'r') as f:
         dataset = json.load(f)
@@ -48,6 +87,9 @@ if __name__ == "__main__":
     tokenizer = get_tokenizer(model_path)
     
     file_path = os.path.join(os.path.dirname(__file__), "ShareGPT_V3_unfiltered_cleaned_split.json")
+    if not os.path.isfile(file_path):
+        file_path = download_and_cache_file(SHAREGPT_URL, file_path)
+
     nums = 10
     target_prompt_len = 100
     select_sharegpt_promots(file_path, nums, target_prompt_len, tokenizer)
