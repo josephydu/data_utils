@@ -4,12 +4,7 @@ import sys
 import requests
 from typing import Optional
 from tqdm import tqdm
-from transformers import (
-    AutoTokenizer,
-    PreTrainedTokenizer,
-    PreTrainedTokenizerBase,
-    PreTrainedTokenizerFast,
-)
+from transformers import AutoTokenizer
 SHAREGPT_URL = "https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/resolve/main/ShareGPT_V3_unfiltered_cleaned_split.json"
 
 def download_and_cache_file(url: str, filename: Optional[str] = None):
@@ -86,7 +81,7 @@ if __name__ == "__main__":
     model_path = 'meta-llama/Llama-2-7b-chat-hf'
     tokenizer = get_tokenizer(model_path)
     
-    file_path = os.path.join(os.path.dirname(__file__), "ShareGPT_V3_unfiltered_cleaned_split.json")
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ShareGPT_V3_unfiltered_cleaned_split.json")
     if not os.path.isfile(file_path):
         file_path = download_and_cache_file(SHAREGPT_URL, file_path)
 
