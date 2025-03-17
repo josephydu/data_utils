@@ -92,4 +92,4 @@ if __name__ == "__main__":
 
     nums = 10
     target_prompt_len = 100
-    select_sharegpt_promots(file_path, nums, target_prompt_len, tokenizer)
+    print(select_sharegpt_promots(file_path, nums, target_prompt_len, tokenizer))
